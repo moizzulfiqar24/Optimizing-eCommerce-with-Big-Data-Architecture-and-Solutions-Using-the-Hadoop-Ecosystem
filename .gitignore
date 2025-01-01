@@ -4,3 +4,5 @@ hbase.tar.gz
 *.tar.gz
 *.csv
 /docker-volume/
+# Ignore log files and directories
+/BDA_PROJ/airflow/custom_airflow/logs/

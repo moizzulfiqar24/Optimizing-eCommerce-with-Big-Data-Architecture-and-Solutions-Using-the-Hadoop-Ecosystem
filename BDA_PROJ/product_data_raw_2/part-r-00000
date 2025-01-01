@@ -1,0 +1,20 @@
+product_id,product_name,category,price,stock_quantity
+1,Ultraboost 22,Shoes,231,-1
+2,Adilette Slides,Shoes,-1,713
+3,Trefoil Hoodie,Clothing,285,588
+4,4D Fusio,Shoes,171,881
+5,Forum Low Shoes,Shoes,245,621
+6,AEROREADY Backpack,Accessories,143,338
+8,ZX 2K Boost Shoes,Shoes,224,83
+9,Alphaskin Tights,Clothing,-1,777
+1,Ultraboost 22,Shoes,231,-1
+4,4D Fusio,Shoes,171,881
+5,Forum Low Shoes,Shoes,245,621
+7,Primeblue Shorts,Clothing,116,80
+7,Primeblue Shorts,Clothing,116,80
+10,R.Y.V. Crossbody Bag,Accessories,187,227
+product_id,product_name,category,price,stock_quantity
+2,Adilette Slides,Shoes,-1,713
+3,Trefoil Hoodie,Clothing,285,588
+6,AEROREADY Backpack,Accessories,143,338
+8,ZX 2K Boost Shoes,Shoes,224,83

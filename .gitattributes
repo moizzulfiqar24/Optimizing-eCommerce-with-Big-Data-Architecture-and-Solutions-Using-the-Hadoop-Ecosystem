@@ -1,0 +1,15 @@
+# Automatically normalize text files to LF
+* text=auto
+
+# Force LF for shell scripts and other executable files
+*.sh eol=lf
+*.rb eol=lf
+*.cmd eol=lf
+
+# Windows batch files
+*.bat eol=crlf
+
+# Binary files should not be modified
+*.png binary
+*.jpg binary
+*.zip binary

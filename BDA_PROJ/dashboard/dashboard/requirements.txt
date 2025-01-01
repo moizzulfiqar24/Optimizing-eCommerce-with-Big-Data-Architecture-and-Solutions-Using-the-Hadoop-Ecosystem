@@ -1,0 +1,4 @@
+streamlit
+happybase
+matplotlib
+plotly
