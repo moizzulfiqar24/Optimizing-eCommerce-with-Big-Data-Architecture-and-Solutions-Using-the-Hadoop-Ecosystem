@@ -633,6 +633,5 @@ The Airflow pipeline automates the entire workflow, from data ingestion in Kafka
 
 For a step-by-step video demonstration of both the manual workflow and the automatic workflow using Airflow, watch the tutorial below:
 
-[![Video Tutorial](https://img.youtube.com/vi/SKyM5aPPrvw/0.jpg)](https://www.youtube.com/watch?v=SKyM5aPPrvw)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SKyM5aPPrvw?si=X9bejalKZXsp7ouL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-Click the image or [here](https://www.youtube.com/watch?v=SKyM5aPPrvw) to watch the video.
