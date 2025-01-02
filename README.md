@@ -566,7 +566,13 @@ You have successfully set up the Airflow container, configured its environment w
    done
    ```
 
-2. **Run Dashboard Services**:
+2. **Start HBase Thrift Server**:
+   Go to the HBase container and start the Thrift server.
+   ```bash
+   docker exec -it hbasebda hbase thrift start &
+   ```
+
+3. **Run Dashboard Services**:
    - For EDA Dashboard:
      ```bash
      streamlit run EDA.py --server.port 8501
@@ -578,3 +584,49 @@ You have successfully set up the Airflow container, configured its environment w
      streamlit run Analysis.py --server.port 8502
      ```
      Access at `http://localhost:8502`.
+
+## Running the Workflow Automatically Using Airflow
+
+### Step 1: Prepare the Airflow DAG
+1. **Move the Pipeline File**:
+   Copy the `bda_pipeline.py` file from the `All Codes Files` folder to the Airflow DAGs directory inside the Airflow container.
+   ```bash
+   docker cp bda_pipeline.py custom_airflow:/usr/local/airflow/dags/
+   ```
+
+2. **Restart the Airflow Container**:
+   Stop and rerun the Airflow container to ensure it picks up the new DAG.
+   ```bash
+   docker-compose -f docker-compose.airflow.yml down
+   docker-compose -f docker-compose.airflow.yml up -d
+   ```
+
+
+### Step 2: Access the Airflow Web UI
+1. **Open the Airflow UI**:
+   Navigate to `http://localhost:8090` in your web browser. You should see the `bda_pipeline` DAG listed on the homepage.
+
+   ![bda_pipeline DAG](README_Files/bda_pipeline.png)
+
+2. **Turn On the Pipeline**:
+   Click on the toggle button to enable the DAG. This will activate the pipeline.
+
+   ![Turn On Pipeline](README_Files/on.png)
+
+
+### Step 3: Trigger the DAG
+1. **Trigger the Pipeline**:
+   Click on the `Trigger DAG` button to start the execution of the pipeline.
+
+   ![Trigger DAG](README_Files/trigger.png)
+
+
+### Step 4: Monitor the Workflow
+1. **View the DAG in Graph View**:
+   Navigate to the `Graph View` tab in the Airflow UI. You will see a graphical representation of the DAG showing the execution progress of each task.
+
+   ![Graph View](README_Files/graph_view.png)
+
+
+### Summary
+The Airflow pipeline automates the entire workflow, from data ingestion in Kafka to analysis using Spark and visualization in the dashboard. Use the Airflow UI to monitor and manage the DAG.
