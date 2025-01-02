@@ -627,6 +627,12 @@ You have successfully set up the Airflow container, configured its environment w
 
    ![Graph View](README_Files/graph_view.png)
 
-
-### Summary
 The Airflow pipeline automates the entire workflow, from data ingestion in Kafka to analysis using Spark and visualization in the dashboard. Use the Airflow UI to monitor and manage the DAG.
+
+## Video Tutorial: Manual and Automatic Workflow
+
+For a step-by-step video demonstration of both the manual workflow and the automatic workflow using Airflow, watch the tutorial below:
+
+[![Video Tutorial](https://img.youtube.com/vi/SKyM5aPPrvw/0.jpg)](https://www.youtube.com/watch?v=SKyM5aPPrvw)
+
+Click the image or [here](https://www.youtube.com/watch?v=SKyM5aPPrvw) to watch the video.
