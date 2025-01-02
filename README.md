@@ -269,9 +269,6 @@ You have now successfully set up the Hadoop NameNode and configured it for both 
 
 You have successfully set up Kafka, HBase, Spark, and Dashboard containers, and configured all necessary environment variables and files for the system to function as intended. Proceed to set up the remaining components or workflows.
 
-Here’s the `README.md` content for setting up the Airflow container:
-
-```markdown
 #### Setting Up Airflow Container
 
 ##### Step 1: Prepare the Project Directory
