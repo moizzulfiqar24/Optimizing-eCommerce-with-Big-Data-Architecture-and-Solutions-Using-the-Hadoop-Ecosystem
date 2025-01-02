@@ -1,29 +1,8 @@
 # Optimizing eCommerce Business with Big Data Architecture and Solutions Using the Hadoop Ecosystem
 
 ## Table of Contents
-1. [Introduction](#introduction)
-2. [Architecture Overview](#architecture-overview)
-3. [Setup Guide](#setup-guide)
-   - [Prerequisites](#prerequisites)
-   - [Cloning the Repository](#cloning-the-repository)
-   - [Docker Containers Setup](#docker-compose-setup)
-      - [Setting Up Hadoop NameNode](#)
-4. [Running the Containers](#running-the-containers)
-   - [Kafka](#kafka)
-   - [Hadoop Cluster](#hadoop-cluster)
-   - [HBase](#hbase)
-   - [Airflow](#airflow)
-   - [Dashboard](#dashboard)
-5. [Airflow Pipeline Configuration](#airflow-pipeline-configuration)
-6. [End-to-End Workflow](#end-to-end-workflow)
-7. [Contributing](#contributing)
-8. [License](#license)
-
-## Introduction
-<!-- Add a brief overview of the project here -->
 
 ## Architecture Overview
-
 This project demonstrates a robust big data architecture for handling and processing real-time and large-scale e-commerce data. The architecture integrates various technologies in the Hadoop ecosystem, complemented by Apache Kafka for real-time data ingestion, Apache Spark for advanced data analysis, and Python-based dashboards for visualization.
 
 ### Architecture Workflow
@@ -619,17 +598,37 @@ You have successfully set up the Airflow container, configured its environment w
    ```
 
 3. **Run Dashboard Services**:
-   - For EDA Dashboard:
-     ```bash
-     streamlit run EDA.py --server.port 8501
-     ```
-     Access at `http://localhost:8501`.
 
-   - For BI Dashboard:
-     ```bash
-     streamlit run Analysis.py --server.port 8502
-     ```
-     Access at `http://localhost:8502`.
+1. **Start the EDA Dashboard**:
+   Run the following command to start the Exploratory Data Analysis (EDA) dashboard:
+   ```bash
+   streamlit run EDA.py --server.port 8501
+   ```
+   Access the EDA dashboard at `http://localhost:8501`.
+
+   Below are a few examples of the EDA dashboard charts:
+   - ![EDA Chart 1](README_Files/EDA/1.jpeg)
+   - ![EDA Chart 2](README_Files/EDA/2.jpeg)
+   - ![EDA Chart 3](README_Files/EDA/3.jpeg)
+   - ![EDA Chart 4](README_Files/EDA/4.jpeg)
+   - ![EDA Chart 5](README_Files/EDA/5.jpeg)
+   - ![EDA Chart 6](README_Files/EDA/6.jpeg)
+
+2. **Start the BI Dashboard**:
+   Run the following command to start the Business Intelligence (BI) dashboard:
+   ```bash
+   streamlit run Analysis.py --server.port 8502
+   ```
+   Access the BI dashboard at `http://localhost:8502`.
+
+   Below are a few examples of the BI dashboard charts:
+   - ![BI Chart 1](README_Files/BI/1.jpeg)
+   - ![BI Chart 2](README_Files/BI/2.jpeg)
+   - ![BI Chart 3](README_Files/BI/3.jpeg)
+   - ![BI Chart 4](README_Files/BI/4.jpeg)
+   - ![BI Chart 5](README_Files/BI/5.jpeg)
+   - ![BI Chart 6](README_Files/BI/6.jpeg)
+   - ![BI Chart 7](README_Files/BI/7.jpeg)
 
 ## Running the Workflow Automatically Using Airflow
 
