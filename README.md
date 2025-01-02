@@ -416,3 +416,165 @@ You have successfully set up Kafka, HBase, Spark, and Dashboard containers, and 
    ```
 
 You have successfully set up the Airflow container, configured its environment with Hadoop, HBase, and Spark, and installed all required dependencies. The architecture is now ready for all Hadoop-based jobs and workflows.
+
+## Running the Workflow Manually
+
+### Step 1: Prepare Data and Scripts
+
+1. **Generate Sample Data**:
+   Use `GenerateCustomers.py`, `GenerateOrder.py`, and `GenerateProducts.py` from the `All Codes Files` folder to create `products.csv`, `orders.csv`, and `customers.csv`.
+
+2. **Copy Data to Kafka Container**:
+   Move the generated CSV files into the root directory of the Kafka container.
+   ```bash
+   docker cp products.csv kafka-container-name:/
+   docker cp orders.csv kafka-container-name:/
+   docker cp customers.csv kafka-container-name:/
+   ```
+
+3. **Copy `.sh` Scripts to Kafka Container**:
+   Move `load_customer.sh`, `load_order.sh`, and `load_product.sh` to the Kafka container.
+   ```bash
+   docker cp load_customer.sh kafka-container-name:/
+   docker cp load_order.sh kafka-container-name:/
+   docker cp load_product.sh kafka-container-name:/
+   ```
+
+4. **Copy Python Scripts to Airflow Container**:
+   - Copy `product_script.py`, `order_script.py`, and `customer_script.py` to `/usr/local/airflow/LoadScripts/` in the Airflow container.
+   ```bash
+   docker cp product_script.py custom_airflow:/usr/local/airflow/LoadScripts/
+   docker cp order_script.py custom_airflow:/usr/local/airflow/LoadScripts/
+   docker cp customer_script.py custom_airflow:/usr/local/airflow/LoadScripts/
+   ```
+   - Copy `customerAnalysis.py` and `salesAnalysis.py` to `/usr/local/airflow/`.
+   ```bash
+   docker cp customerAnalysis.py custom_airflow:/usr/local/airflow/
+   docker cp salesAnalysis.py custom_airflow:/usr/local/airflow/
+   ```
+
+5. **Copy MapReduce Codes to Airflow Container**:
+   Move all MapReduce codes for bulk load and ETL into the Airflow container.
+   ```bash
+   docker cp MapReduceBulkLoad/ custom_airflow:/usr/local/airflow/
+   docker cp MapReduceETL/ custom_airflow:/usr/local/airflow/
+   ```
+
+### Step 2: Create HDFS Directories in Airflow Container
+1. Enter the Airflow container:
+   ```bash
+   docker exec -it custom_airflow /bin/bash
+   ```
+
+2. Create directories for raw data:
+   ```bash
+   hdfs dfs -mkdir -p /airflow/customer_data_raw
+   hdfs dfs -mkdir -p /airflow/product_data_raw
+   hdfs dfs -mkdir -p /airflow/order_data_raw
+   ```
+
+### Step 3: Set Up Kafka Topics
+1. **Enter Kafka Container**:
+   ```bash
+   docker exec -it kafka-container-name /bin/bash
+   ```
+
+2. **Create Topics**:
+   ```bash
+   /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic ProductTopic --bootstrap-server localhost:9092 --partitions 2 --replication-factor 1
+   /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic OrderTopic --bootstrap-server localhost:9092 --partitions 2 --replication-factor 1
+   /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic CustomerTopic --bootstrap-server localhost:9092 --partitions 2 --replication-factor 1
+   ```
+
+3. **List Topics**:
+   Verify the topics are created.
+   ```bash
+   /opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:9092
+   ```
+
+4. **Run Load Scripts**:
+   Execute the `.sh` scripts to ingest data into Kafka.
+   ```bash
+   ./load_order.sh
+   ./load_product.sh
+   ./load_customer.sh
+   ```
+
+### Step 4: Load Data into HDFS Using Airflow
+1. **Run Python Scripts for Data Loading**:
+   In the Airflow container, execute the following commands to load data from Kafka to HDFS.
+   ```bash
+   python /usr/local/airflow/LoadScripts/product_script.py --topic ProductTopic --hdfs_path hdfs://hadoop-namenode-bda:9000/airflow/product_data_raw/ --batch_size 50
+   python /usr/local/airflow/LoadScripts/order_script.py --topic OrderTopic --hdfs_path hdfs://hadoop-namenode-bda:9000/airflow/order_data_raw/ --batch_size 50
+   python /usr/local/airflow/LoadScripts/customer_script.py --topic CustomerTopic --hdfs_path hdfs://hadoop-namenode-bda:9000/airflow/customer_data_raw/ --batch_size 50
+   ```
+
+### Step 5: Run MapReduce Jobs for ETL
+1. **Execute MapReduce Jobs**:
+   Run the ETL jobs to clean data.
+   ```bash
+   hadoop jar /usr/local/airflow/ProductCleaner/product-data-cleaner.jar ProductDataDriver /airflow/product_data_raw /airflow/product_data_cleaned/
+   hadoop jar /usr/local/airflow/CustomerCleaner/customer-data-cleaner.jar CustomerDataDriver /airflow/customer_data_raw /airflow/customer_data_cleaned/
+   hadoop jar /usr/local/airflow/OrderCleaner/order-data-cleaner.jar OrderDataDriver /airflow/order_data_raw /airflow/order_data_cleaned/ /airflow/product_data_cleaned/part-r-00000
+   ```
+
+### Step 6: Prepare Data for HBase
+1. **Create Directories for HFiles**:
+   ```bash
+   hdfs dfs -mkdir -p /hfiles/order
+   hdfs dfs -mkdir -p /hfiles/customer
+   hdfs dfs -mkdir -p /hfiles/product
+   ```
+
+2. **Run HFile Generator Jobs**:
+   ```bash
+   hadoop jar /usr/local/airflow/ProductHFile/product-hfile-generator.jar ProductHFileDriver /airflow/product_data_cleaned/part-r-00000 /hfiles/product ProductTable
+   hadoop jar /usr/local/airflow/CustomerHFile/customer-hfile-generator.jar CustomerHFileDriver /airflow/customer_data_cleaned/ /hfiles/customer CustomerTable
+   hadoop jar /usr/local/airflow/OrderHFile/order-hfile-generator.jar OrderHFileDriver /airflow/order_data_cleaned/part-r-00000 /hfiles/order OrderTable
+   ```
+
+3. **Set Permissions and Load HFiles to HBase**:
+   Use the following commands to bulk load data into HBase.
+   ```bash
+   docker exec --user root hadoop-namenode-bda hdfs dfs -chown -R hbase:hbase /hfiles
+   docker exec --user root hadoop-namenode-bda hdfs dfs -chmod -R 775 /hfiles
+   docker exec --user root hbasebda hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles hdfs://hadoop-namenode-bda:9000/hfiles/product ProductTable
+   ```
+
+### Step 7: Perform Data Analysis
+1. **Run Spark Analysis Jobs**:
+   Execute the Spark jobs for customer and sales analysis.
+   ```bash
+   spark-submit --master spark://spark-master-bda:7077 --deploy-mode client /usr/local/airflow/sparkanalysis/customerAnalysis.py
+   spark-submit --master spark://spark-master-bda:7077 --deploy-mode client /usr/local/airflow/sparkanalysis/salesAnalysis.py
+   ```
+
+### Step 8: Load Analysis Results to Dashboard
+1. **Transfer Results to Dashboard Container**:
+   Use the following script to move analysis results to the dashboard container.
+   ```bash
+   base_hdfs_dir="/airflow/results"
+   local_dir="/usr/local/airflow/sparkanalysis/analysisdata"
+   dashboard_dir="/app/csvfiles"
+
+   subdirectories=("age_distribution" "gender_sales" "high_value_customers" "location_sales" "monthly_order_trends" "monthly_sales" "payment_method_distribution" "top_products" "total_revenue")
+
+   for subdir in "${subdirectories[@]}"; do
+       hdfs dfs -get ${base_hdfs_dir}/${subdir}/part-*.csv ${local_dir}/${subdir}/
+       docker cp ${local_dir}/${subdir}/part-*.csv dashboard:${dashboard_dir}/${subdir}/
+       rm -rf ${local_dir}/${subdir}/*
+   done
+   ```
+
+2. **Run Dashboard Services**:
+   - For EDA Dashboard:
+     ```bash
+     streamlit run EDA.py --server.port 8501
+     ```
+     Access at `http://localhost:8501`.
+
+   - For BI Dashboard:
+     ```bash
+     streamlit run Analysis.py --server.port 8502
+     ```
+     Access at `http://localhost:8502`.
