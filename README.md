@@ -24,6 +24,52 @@
 
 ## Architecture Overview
 
+This project demonstrates a robust big data architecture for handling and processing real-time and large-scale e-commerce data. The architecture integrates various technologies in the Hadoop ecosystem, complemented by Apache Kafka for real-time data ingestion, Apache Spark for advanced data analysis, and Python-based dashboards for visualization.
+
+### Architecture Workflow
+
+1. **Data Ingestion**:
+   - Real-time data from POS systems is ingested using **Apache Kafka**.
+   - Data is loaded into **HDFS** in batches of 50 rows whenever new data arrives.
+
+2. **Data Cleaning & Preprocessing**:
+   - Raw data in HDFS undergoes a **MapReduce job** for cleaning.
+   - The cleaned data is stored back in HDFS.
+
+3. **Conversion to HFiles**:
+   - Another **MapReduce job** converts the cleaned data into **HFiles**.
+   - These HFiles are bulk-loaded into **Apache HBase**.
+
+4. **Clean Data Store**:
+   - Data in HBase is fully cleaned and optimized for direct user queries.
+   - **Thrift Server** connects Python-based EDA scripts to HBase for exploratory data analysis (EDA).
+
+5. **Data Analysis**:
+   - **Apache Spark** processes the cleaned data in HDFS to perform advanced analytics.
+   - Python scripts define and run the analysis tasks.
+
+6. **Dashboards**:
+   - A Python-based **EDA dashboard** visually presents the exploratory data analysis results from HBase.
+   - A Python-based **BI dashboard** displays analysis results from Spark.
+
+7. **Airflow Integration**:
+   - The entire flow is orchestrated using **Apache Airflow** for seamless execution and scheduling.
+
+### Architecture Diagram
+
+Below is the visual representation of the architecture:
+
+![BDA Project Architecture](README_Files/BDA%20Project%20Architecture.png)
+
+### Key Features
+
+- Real-time and batch data handling capabilities.
+- Scalable and optimized for large-scale e-commerce datasets.
+- User-friendly dashboards for data exploration and business intelligence.
+- Seamless integration of all components through Apache Airflow for automation.
+
+This architecture is designed to handle real-time POS data and bulk data ingestion, providing a complete big data solution for e-commerce platforms.
+
 ## Setup Guide
 
 ### Prerequisites
