@@ -253,8 +253,8 @@ You have now successfully set up the Hadoop NameNode and configured it for both 
 1. **Move `server.properties`**:
    Copy the `server.properties` file from the `All Codes Files` folder to the required directories in the Kafka container.
    ```bash
-   docker cp ../All_Codes_Files/server.properties kafka-container-name:/opt/bitnami/kafka/config/kraft/
-   docker cp ../All_Codes_Files/server.properties kafka-container-name:/opt/bitnami/kafka/config/
+   docker cp ../All_Codes_Files/server.properties kafka:/opt/bitnami/kafka/config/kraft/
+   docker cp ../All_Codes_Files/server.properties kafka:/opt/bitnami/kafka/config/
    ```
 
 ##### Step 4: Configure HBase Container
@@ -517,17 +517,17 @@ You have successfully set up the Airflow container, configured its environment w
 2. **Copy Data to Kafka Container**:
    Move the generated CSV files into the root directory of the Kafka container.
    ```bash
-   docker cp products.csv kafka-container-name:/
-   docker cp orders.csv kafka-container-name:/
-   docker cp customers.csv kafka-container-name:/
+   docker cp products.csv kafka:/
+   docker cp orders.csv kafka:/
+   docker cp customers.csv kafka:/
    ```
 
 3. **Copy `.sh` Scripts to Kafka Container**:
    Move `load_customer.sh`, `load_order.sh`, and `load_product.sh` to the Kafka container.
    ```bash
-   docker cp load_customer.sh kafka-container-name:/
-   docker cp load_order.sh kafka-container-name:/
-   docker cp load_product.sh kafka-container-name:/
+   docker cp load_customer.sh kafka:/
+   docker cp load_order.sh kafka:/
+   docker cp load_product.sh kafka:/
    ```
 
 4. **Copy Python Scripts to Airflow Container**:
