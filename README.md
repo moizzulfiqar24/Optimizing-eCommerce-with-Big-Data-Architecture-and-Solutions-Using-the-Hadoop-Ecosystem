@@ -2,6 +2,50 @@
 
 ## Table of Contents
 
+1. [Architecture Overview](#architecture-overview)
+   - [Architecture Workflow](#architecture-workflow)
+   - [Architecture Diagram](#architecture-diagram)
+   - [Key Features](#key-features)
+2. [Setup Guide](#setup-guide)
+   - [Prerequisites](#prerequisites)
+   - [Docker Containers Setup](#docker-containers-setup)
+     - [Setting Up Hadoop NameNode](#setting-up-hadoop-namenode)
+       - [Step 1: Prepare the Project Directory](#step-1-prepare-the-project-directory)
+       - [Step 2: Start Hadoop Containers](#step-2-start-hadoop-containers)
+       - [Step 3: Access the NameNode](#step-3-access-the-namenode)
+       - [Step 4: Create and Copy Hadoop Configuration Archive](#step-4-create-and-copy-hadoop-configuration-archive)
+       - [Step 5: Configure NameNode Environment](#step-5-configure-namenode-environment)
+       - [Step 6: Set Up HDFS for Airflow](#step-6-set-up-hdfs-for-airflow)
+     - [Setting Up Kafka, HBase, Spark, and Dashboard Containers](#setting-up-kafka-hbase-spark-and-dashboard-containers)
+       - [Step 1: Prepare the Project Directory](#step-1-prepare-the-project-directory-1)
+       - [Step 2: Start the Containers](#step-2-start-the-containers)
+       - [Step 3: Configure Kafka Container](#step-3-configure-kafka-container)
+       - [Step 4: Configure HBase Container](#step-4-configure-hbase-container)
+       - [Step 5: Configure Spark Master](#step-5-configure-spark-master)
+     - [Setting Up Airflow Container](#setting-up-airflow-container)
+       - [Step 1: Prepare the Project Directory](#step-1-prepare-the-project-directory-2)
+       - [Step 2: Start the Airflow Container](#step-2-start-the-airflow-container)
+       - [Step 3: Configure Docker Permissions](#step-3-configure-docker-permissions)
+       - [Step 4: Configure Airflow Environment](#step-4-configure-airflow-environment)
+       - [Step 5: Configure HBase](#step-5-configure-hbase)
+       - [Step 6: Configure Spark](#step-6-configure-spark)
+       - [Step 7: Finalize Setup](#step-7-finalize-setup)
+3. [Running the Workflow Manually](#running-the-workflow-manually)
+   - [Step 1: Prepare Data and Scripts](#step-1-prepare-data-and-scripts)
+   - [Step 2: Create HDFS Directories in Airflow Container](#step-2-create-hdfs-directories-in-airflow-container)
+   - [Step 3: Set Up Kafka Topics](#step-3-set-up-kafka-topics)
+   - [Step 4: Load Data into HDFS Using Airflow](#step-4-load-data-into-hdfs-using-airflow)
+   - [Step 5: Run MapReduce Jobs for ETL](#step-5-run-mapreduce-jobs-for-etl)
+   - [Step 6: Prepare Data for HBase](#step-6-prepare-data-for-hbase)
+   - [Step 7: Perform Data Analysis](#step-7-perform-data-analysis)
+   - [Step 8: Load Analysis Results to Dashboard](#step-8-load-analysis-results-to-dashboard)
+4. [Running the Workflow Automatically Using Airflow](#running-the-workflow-automatically-using-airflow)
+   - [Step 1: Prepare the Airflow DAG](#step-1-prepare-the-airflow-dag)
+   - [Step 2: Access the Airflow Web UI](#step-2-access-the-airflow-web-ui)
+   - [Step 3: Trigger the DAG](#step-3-trigger-the-dag)
+   - [Step 4: Monitor the Workflow](#step-4-monitor-the-workflow)
+5. [Video Tutorial: Manual and Automatic Workflow](#video-tutorial-manual-and-automatic-workflow)
+
 ## Architecture Overview
 This project demonstrates a robust big data architecture for handling and processing real-time and large-scale e-commerce data. The architecture integrates various technologies in the Hadoop ecosystem, complemented by Apache Kafka for real-time data ingestion, Apache Spark for advanced data analysis, and Python-based dashboards for visualization.
 
@@ -52,6 +96,27 @@ This architecture is designed to handle real-time POS data and bulk data ingesti
 ## Setup Guide
 
 ### Prerequisites
+
+Before setting up and running this project, ensure that your system meets the following prerequisites:
+
+1. **Docker Desktop**:
+   - Install Docker Desktop on your system. You can download it from the [official Docker website](https://www.docker.com/products/docker-desktop/).
+
+2. **Docker Hub Account**:
+   - Create a Docker Hub account to access required container images. You can sign up at [Docker Hub](https://hub.docker.com/).
+
+3. **Sufficient Disk Space**:
+   - Ensure that your system has at least **30GB of free disk space** to store container images, logs, and data files.
+
+4. **Minimum System Requirements**:
+   - **RAM**: At least **8GB** of available RAM to run multiple containers simultaneously.
+   - **Processor**: A multi-core processor (recommended: at least 4 cores).
+
+5. **Operating System**:
+   - **Windows 10/11**, **macOS**, or **Linux** with Docker compatibility.
+
+6. **Internet Connection**:
+   - A stable internet connection is required to download Docker images and access the necessary dependencies.
 
 ### Docker Containers Setup
 
