@@ -68,7 +68,6 @@
    docker ps
    ```
 
----
 
 ##### Step 3: Access the NameNode
 1. **Enter the NameNode Container**:
@@ -77,7 +76,6 @@
    docker exec -it hadoop-namenode-bda /bin/bash
    ```
 
----
 
 ##### Step 4: Create and Copy Hadoop Configuration Archive
 1. **Create a TAR Archive of the Hadoop Directory**:
@@ -92,7 +90,6 @@
    docker cp hadoop-namenode-bda:/hadoop-3.2.1.tar.gz .
    ```
 
----
 
 ##### Step 5: Configure NameNode Environment
 1. **Set Paths and Create JAR Files**:
@@ -126,7 +123,6 @@
    source ~/.bashrc
    ```
 
----
 
 ##### Step 6: Set Up HDFS for Airflow
 1. **Create Airflow Directory in HDFS**:
@@ -141,6 +137,5 @@
    hdfs dfs -chmod 775 /user/airflow
    ```
 
----
 
 You have now successfully set up the Hadoop NameNode and configured it for both distributed file system access and integration with Airflow. Proceed to set up the remaining components or workflows.
