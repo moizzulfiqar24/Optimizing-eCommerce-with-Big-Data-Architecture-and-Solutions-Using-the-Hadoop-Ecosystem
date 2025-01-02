@@ -19,23 +19,14 @@
 7. [Contributing](#contributing)
 8. [License](#license)
 
----
-
 ## Introduction
 <!-- Add a brief overview of the project here -->
 
----
-
 ## Architecture Overview
-<!-- Provide a high-level description of the architecture here -->
-<!-- Optionally include a diagram -->
-
----
 
 ## Setup Guide
 
 ### Prerequisites
-<!-- List the prerequisites for setting up the project -->
 
 ### Docker Containers Setup
 
@@ -276,5 +267,155 @@ You have now successfully set up the Hadoop NameNode and configured it for both 
    source ~/.bashrc
    ```
 
-You have successfully set up Kafka, HBase, Spark, and Dashboard containers, and configured all necessary environment variables and files for the system to function as intended. Proceed with integrating workflows or orchestrating tasks.
+You have successfully set up Kafka, HBase, Spark, and Dashboard containers, and configured all necessary environment variables and files for the system to function as intended. Proceed to set up the remaining components or workflows.
 
+Here’s the `README.md` content for setting up the Airflow container:
+
+```markdown
+#### Setting Up Airflow Container
+
+##### Step 1: Prepare the Project Directory
+1. **Move the Airflow Compose File**:
+   Copy the `docker-compose.airflow.yml` file from the `All Docker Compose Files` folder to the `BDA_Project` folder.
+   ```bash
+   cp ../All_Docker_Compose_Files/docker-compose.airflow.yml .
+   ```
+
+##### Step 2: Start the Airflow Container
+1. **Compose Up the Airflow Container**:
+   Start the Airflow container using `docker-compose`.
+   ```bash
+   docker-compose -f docker-compose.airflow.yml up -d
+   ```
+
+2. **Check the Running Containers**:
+   Verify the Airflow container is running.
+   ```bash
+   docker ps
+   ```
+
+##### Step 3: Configure Docker Permissions
+1. **Access the Airflow Container as Root**:
+   Enter the Airflow container with root permissions to configure the Docker socket.
+   ```bash
+   docker exec -it --user root custom_airflow /bin/bash
+   ```
+
+2. **Set Permissions for Docker Socket**:
+   Set proper permissions for the Docker socket.
+   ```bash
+   chmod 666 /var/run/docker.sock
+   exit
+   ```
+
+3. **Re-enter Airflow Container**:
+   Enter the Airflow container as the default user.
+   ```bash
+   docker exec -it custom_airflow /bin/bash
+   ```
+
+##### Step 4: Configure Airflow Environment
+1. **Set the Fernet Key**:
+   Export the Fernet Key for Airflow.
+   ```bash
+   export FERNET_KEY=RP9QND5O48Du6-_W5lKvwI-NarPSZyZmTs9IfcMDork=
+   ```
+
+2. **Install Required Libraries**:
+   Install libraries for Kafka and Spark.
+   ```bash
+   pip install kafka-python pyspark
+   ```
+
+3. **Create and Extract Hadoop**:
+   Create a directory for Hadoop and extract the TAR file.
+   ```bash
+   mkdir /usr/local/airflow/hadoop
+   tar -xzvf hadoop-3.2.1.tar.gz
+   ```
+
+4. **Install and Verify Libraries**:
+   Verify that the required libraries are installed.
+   ```bash
+   pip show kafka-python pydoop
+   ```
+
+5. **Set Hadoop Environment Variables**:
+   ```bash
+   export HADOOP_HOME=/usr/local/airflow/hadoop/hadoop-3.2.1/
+   export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+   echo "export HADOOP_HOME=/usr/local/airflow/hadoop/hadoop-3.2.1/" >> ~/.bashrc
+   echo "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin" >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+6. **Install Java**:
+   Install Java for Hadoop compatibility.
+   ```bash
+   apt-get install -y openjdk-11-jdk
+   mkdir -p /usr/share/man/man1
+   dpkg --configure -a
+   apt-get install -y openjdk-11-jdk
+   ```
+
+##### Step 5: Configure HBase
+1. **Move and Extract HBase TAR File**:
+   Copy the HBase TAR file to Airflow and extract it.
+   ```bash
+   tar -xzvf hbase.tar.gz
+   ```
+
+2. **Set HBase Environment Variables**:
+   ```bash
+   export HBASE_HOME=/usr/local/airflow/hbase/hbase-2.4.13
+   export PATH=$PATH:$HBASE_HOME/bin
+
+   echo "export HBASE_HOME=/usr/local/airflow/hbase/hbase-2.4.13" >> ~/.bashrc
+   echo "export PATH=$PATH:$HBASE_HOME/bin" >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+3. **Set Hadoop Classpath**:
+   ```bash
+   echo "export HADOOP_CLASSPATH=$HBASE_HOME/lib/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/yarn/*" >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+4. **Verify Hadoop Classpath**:
+   ```bash
+   export HADOOP_CLASSPATH=$(find /usr/local/airflow/hadoop/hadoop-3.2.1/share/hadoop -name "*.jar" | tr '\n' ':'):/usr/local/airflow/hbase/hbase-2.4.13/lib/*
+   export HADOOP_CLASSPATH=$(find /usr/local/airflow/hbase/hbase-2.4.13/lib -name "*.jar" | tr '\n' ':'):$HADOOP_CLASSPATH
+   export HBASE_CLASSPATH=$(hbase classpath)
+   ```
+
+##### Step 6: Configure Spark
+1. **Create and Extract Spark Directory**:
+   Create a Spark directory in Airflow and extract the TAR file.
+   ```bash
+   mkdir /usr/local/airflow/spark
+   tar -xzvf spark.tar.gz
+   ```
+
+2. **Set Spark Environment Variables**:
+   ```bash
+   export SPARK_HOME=/usr/local/airflow/spark
+   export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+   source ~/.bashrc
+   ```
+
+3. **Verify Spark Installation**:
+   ```bash
+   spark-submit --version
+   ```
+
+##### Step 7: Finalize Setup
+1. **Set Final Environment Variables**:
+   ```bash
+   export HBASE_HOME=/hbase/hbase-1.2.6
+   export HADOOP_CLASSPATH=$(find $HADOOP_HOME/share/hadoop -name "*.jar" | tr '\n' ':'):$HBASE_HOME/lib/*
+   export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HBASE_HOME/bin
+   source ~/.bashrc
+   ```
+
+You have successfully set up the Airflow container, configured its environment with Hadoop, HBase, and Spark, and installed all required dependencies. The architecture is now ready for all Hadoop-based jobs and workflows.
