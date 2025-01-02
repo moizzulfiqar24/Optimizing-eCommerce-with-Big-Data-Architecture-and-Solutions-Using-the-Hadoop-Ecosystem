@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  dashboard:
+    image: python:3.9
+    container_name: dashboard
+    volumes:
+      - ./dashboard:/app
+    working_dir: /app
+    ports:
+      - "8501:8501"  # First Streamlit server port
+      - "8502:8502"  # Second Streamlit server port
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HBASE_HOST=hbasebda
+      - HBASE_PORT=9090
+    stdin_open: true  # Keep the container open for manual commands
+    tty: true         # Allocate a pseudo-TTY
+    command: sh -c "pip install -r requirements.txt && tail -f /dev/null"  # Prevent container from exiting after startup
+    networks:
+      - bda_network
+
+networks:
+  bda_network:
+    driver: bridge
+    name: bda_network
